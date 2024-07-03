@@ -1,13 +1,14 @@
 import Animelist from "./components/Animelist";
 import Header from "./components/Animelist/Header";
-import { getAnimeResponse } from "./libs/api-libs";
+import { getAnimeResponse, getNestedAnimeResponse, reProduce } from "@/libs/api-libs";
 const Page = async () => {
   // const response = await fetch(
   //   `${process.env.NEXT_PUBLIC_API_URL}/top/anime?limit=8`
   // );
   // const topAnime = await response.json();
   const topAnime = await getAnimeResponse("top/anime", "limit=8")
-
+  let recommendedAnime = await getNestedAnimeResponse("recommendations/anime", "entry")
+    recommendedAnime = reProduce(recommendedAnime, 8)
 
   return (
     <>
@@ -24,11 +25,11 @@ const Page = async () => {
       {/* Anime Terbaru */}
       <section>
         <Header
-          title="Paling Baru"
+          title="Rekomendasi"
           linkHref="/palingbaru"
           linkTitle="Ikuti Sekarang"
         />
-        <Animelist api={topAnime} />
+        <Animelist api={recommendedAnime} />
       </section>
     </>
   );
