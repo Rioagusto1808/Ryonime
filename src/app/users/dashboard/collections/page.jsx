@@ -1,44 +1,42 @@
-import React from 'react'
-import Link from 'next/link'
-import Image from 'next/image'
-import { ArrowCircleLeft } from '@phosphor-icons/react/dist/ssr'
-import Header from '@/app/components/Dashboard/Header'
-ArrowCircleLeft
+import React from "react";
+import Link from "next/link";
+import Image from "next/image";
+import Header from "@/app/components/Dashboard/Header";
+import prisma from "@/libs/prisma";
+import AuthUserSession from "@/libs/auth-libs";
 
-const Page = () => {
+const Page = async () => {
+  const user = await AuthUserSession();
+  const collection = await prisma.collection.findMany({
+    where: { user_email: user.email },
+  });
   return (
-    <section className='mt-4 w-full'>
-        <Header title={"My Collections"}/>
-    <div className='grid gap-4 sm:grid-cols-2 lg:grid-cols-4'>
-        
-        <Link className="relative border-2 border-color-accent" href="/">
-        <Image src="" alt="" width={250}height={250} className='w-full'/>
-        <div className='flex justify-center items-center absolute bottom-0 w-full bg-color-accent h-16'>
-            <h5 className='text-xl text-center'>Judul Anime</h5>
-        </div>
-        </Link>  
-        <Link className="relative border-2 border-color-accent" href="/">
-        <Image src="" alt="" width={250}height={250} className='w-full'/>
-        <div className='flex justify-center items-center absolute bottom-0 w-full bg-color-accent h-16'>
-            <h5 className='text-xl text-center'>Judul Anime</h5>
-        </div>
-        </Link>  
-        <Link className="relative border-2 border-color-accent" href="/">
-        <Image src="" alt="" width={250}height={250} className='w-full'/>
-        <div className='flex justify-center items-center absolute bottom-0 w-full bg-color-accent h-16'>
-            <h5 className='text-xl text-center'>Judul Anime</h5>
-        </div>
-        </Link>  
-        <Link className="relative border-2 border-color-accent" href="/">
-        <Image src="" alt="" width={250}height={250} className='w-full'/>
-        <div className='flex justify-center items-center absolute bottom-0 w-full bg-color-accent h-16'>
-            <h5 className='text-xl text-center'>Judul Anime</h5>
-        </div>
-        </Link>  
-        </div>
+    <section className="mt-4 w-full">
+      <Header title={"My Collections"} />
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {collection.map((collect, index) => {
+          return (
+            <Link
+              key={index}
+              href={`/anime/${collect.anime_mal_id}`}
+              className="relative"
+            >
+              <Image
+                src={collect.anime_image}
+                alt={collect.anime_image}
+                width={250}
+                height={250}
+                className="w-full"
+              />
+              <div className="flex justify-center items-center absolute bottom-0 w-full bg-color-accent h-16">
+                <h5 className="text-xl text-center">{collect.anime_title}</h5>
+              </div>
+            </Link>
+          );
+        })}
+      </div>
     </section>
-  )
-  
-}
+  );
+};
 
-export default Page
+export default Page;
